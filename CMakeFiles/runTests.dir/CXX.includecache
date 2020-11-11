@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/dyglo/theo/final/piece.cpp
+string
+-
+piece.h
+/home/dyglo/theo/final/piece.h
+
+/home/dyglo/theo/final/piece.h
+string
+-
+
+/home/dyglo/theo/final/tests.cpp
+gtest/gtest.h
+-
+iostream
+-
+piece.h
+/home/dyglo/theo/final/piece.h
+
