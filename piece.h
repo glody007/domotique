@@ -1,13 +1,11 @@
 #ifndef PIECE_HPP_
 #define PIECE_HPP_
 
-#include <string>
-
 class Piece
 {
   private:
     bool isInterrupteurOn, isPriseAlimenter, isLampeOn, presence;
-    int pinInterrupteur, pinPrise, pinPresenceSensor; int pinLampe;
+    int pinInterrupteur, pinPrise, pinPresenceSensor, pinLampe, tresholdVoltage;
 
     void updateIfPossible(bool isInterrupteurOn, bool presence);
 
@@ -27,6 +25,8 @@ class Piece
 
     Piece(int pinInterrupteur, int pinPrise, int pinPresenceSensor, int pinLampe);
 
+    Piece(int pinInterrupteur, int pinPrise, int pinPresenceSensor, int pinLampe, int tresholdVoltage);
+
     bool getIsLampeOn();
 
     bool getIsInterrupteurOn();
@@ -41,15 +41,11 @@ class Piece
 
     int getPinPresenceSensor();
 
-    std::string etatLampe();
-
     void allumerLampe();
 
     void eteindreLampe();
 
     bool getIsPriseAlimenter();
-
-    std::string etatPrise();
 
     void alimenterPrise();
 
@@ -57,9 +53,9 @@ class Piece
 
     void update();
 
-    void updateFromData(int interrupteurState, int presenceState);
+    void updateFromData(float interrupteurState, int presenceState);
 
-    bool boolFromState(int state);
+    bool boolFromState(float state);
 };
 
 #endif

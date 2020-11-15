@@ -1,17 +1,13 @@
-#include <string>
 #include "piece.h"
 
 using namespace std;
 
-Piece::Piece()
-{
-  isInterrupteurOn = false;
-  isPriseAlimenter = false;
-  isLampeOn = false;
-  presence = false;
-}
+Piece::Piece() : Piece::Piece(2, 3, 4, 5, Piece::LOW_VOLTAGE) {}
 
-Piece::Piece(int pinInterrupteur, int pinPrise, int pinPresenceSensor, int pinLampe)
+Piece::Piece(int pinInterrupteur, int pinPrise, int pinPresenceSensor, int pinLampe) :
+            Piece::Piece(pinInterrupteur, pinPrise, pinPresenceSensor, pinLampe, Piece::LOW_VOLTAGE) {}
+
+Piece::Piece(int pinInterrupteur, int pinPrise, int pinPresenceSensor, int pinLampe, int tresholdVoltage)
 {
   isInterrupteurOn = false;
   isPriseAlimenter = false;
@@ -21,6 +17,7 @@ Piece::Piece(int pinInterrupteur, int pinPrise, int pinPresenceSensor, int pinLa
   this->pinPrise = pinPrise;
   this->pinPresenceSensor = pinPresenceSensor;
   this->pinLampe = pinLampe;
+  this->tresholdVoltage = tresholdVoltage;
 }
 
 int Piece::getPinInterrupteur()
@@ -58,14 +55,6 @@ bool Piece::getPresence()
   return presence;
 }
 
-string Piece::etatLampe()
-{
-  if(isLampeOn){
-    return "La lampe est allume";
-  }
-  return "La lampe est eteinte";
-}
-
 void Piece::allumerLampe()
 {
   isLampeOn = true;
@@ -79,14 +68,6 @@ void Piece::eteindreLampe()
 bool Piece::getIsPriseAlimenter()
 {
   return isPriseAlimenter;
-}
-
-string Piece::etatPrise()
-{
-  if(isPriseAlimenter){
-    return "La prise est alimente";
-  }
-  return "La prise n'est pas alimente";
 }
 
 void Piece::alimenterPrise()
@@ -103,13 +84,12 @@ void Piece::update() {
 
 }
 
-void Piece::updateFromData(int interrupteurState, int presenceState) {
-  update(boolFromState(interrupteurState), boolFromState(presenceState));
+void Piece::updateFromData(float interrupteurState, int presenceState) {
+  updateIfPossible(boolFromState(interrupteurState), presenceState);
 }
 
-bool Piece::boolFromState(int state) {
-  int delta = state - LOW_VOLTAGE;
-  if(delta < 1) {
+bool Piece::boolFromState(float state) {
+  if(state <= tresholdVoltage) {
     return false;
   }
   return true;
@@ -149,6 +129,6 @@ void Piece::updateFromPresence(bool presence)
 }
 
 void Piece::updateFromInterrupteur(bool isInterrupteurOn) {
-  isLampeOn = isInterrupteurOn;
+  isLampeOn = !isLampeOn;
   this->isInterrupteurOn = isInterrupteurOn;
 }

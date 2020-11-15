@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include "piece.h"
+#include "maison.h"
 
 TEST(PieceTest, defaultConstructor) {
   Piece piece = Piece();
@@ -35,9 +36,15 @@ TEST(PieceTest, alimenterEtDeconnecterPrise) {
 }
 
 TEST(PieceTest, boolFromState) {
-  Piece piece = Piece();
-  ASSERT_EQ(true, piece.boolFromState(Piece::HIGH_VOLTAGE));
-  ASSERT_EQ(false, piece.boolFromState(Piece::LOW_VOLTAGE));
+  Piece piece1 = Piece();
+  ASSERT_EQ(true, piece1.boolFromState(Piece::HIGH_VOLTAGE));
+  ASSERT_EQ(false, piece1.boolFromState(Piece::LOW_VOLTAGE));
+  int interrupteur = 2, prise = 3, presenceSensor = 4, lampe = 5, tresholdVoltage = 2;
+  Piece piece2 = Piece(interrupteur, prise, presenceSensor, lampe, tresholdVoltage);
+  ASSERT_EQ(true, piece2.boolFromState(Piece::HIGH_VOLTAGE));
+  ASSERT_EQ(false, piece2.boolFromState(tresholdVoltage));
+  ASSERT_EQ(false, piece2.boolFromState(tresholdVoltage - 1));
+  ASSERT_EQ(true, piece2.boolFromState(tresholdVoltage + 1));
 }
 
 TEST(PieceTest, updateFromData) {
@@ -80,6 +87,44 @@ TEST(PieceTest, updateFromData) {
   ASSERT_EQ(true, piece.getIsLampeOn());
   ASSERT_EQ(true, piece.getPresence());
   ASSERT_EQ(true, piece.getIsInterrupteurOn());
+
+  //Eteindre avec le telephone
+  piece.eteindreLampe();
+  ASSERT_EQ(false, piece.getIsLampeOn());
+  //Allumer en mettant l'interrupteur a OFF
+  piece.updateFromData(Piece::LOW_VOLTAGE, Piece::HIGH_VOLTAGE);
+  ASSERT_EQ(true, piece.getIsLampeOn());
+  //Eteindre en mettant l'interrupteur a ON
+  piece.updateFromData(Piece::HIGH_VOLTAGE, Piece::HIGH_VOLTAGE);
+  ASSERT_EQ(false, piece.getIsLampeOn());
+}
+
+TEST(MaisonTest, constructor) {
+  Piece piece1 = Piece();
+  Piece piece2 = Piece();
+  Piece pieces[] = {piece1, piece2};
+  Maison maison = Maison(2, pieces);
+  ASSERT_EQ(2, maison.getNombrePieces());
+  ASSERT_EQ(&(pieces[0]), &(maison.getPieces()[0]));
+}
+
+TEST(MaisonTest, commande) {
+  Piece piece1 = Piece();
+  Piece piece2 = Piece();
+  Piece pieces[] = {piece1, piece2};
+  Maison maison = Maison(2, pieces);
+  ASSERT_EQ(false, piece1.getIsLampeOn());
+  char allumerLampe1[] = "AL1";
+  char allumerLampe2[] = "AL2";
+  char eteindreLampe1[] = "EL1";
+  char eteindreLampe2[] = "EL2";
+  maison.updateFromCommande(allumerLampe1);
+  ASSERT_EQ(true, maison.getPiece(1).getIsLampeOn());
+  maison.updateFromCommande(eteindreLampe1);
+  ASSERT_EQ(false, maison.getPiece(1).getIsLampeOn());
+  ASSERT_EQ(false, maison.getPiece(2).getIsLampeOn());
+  maison.updateFromCommande(allumerLampe2);
+  ASSERT_EQ(true, maison.getPiece(2).getIsLampeOn());
 }
 
 int main(int argc, char **argv) {
