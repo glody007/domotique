@@ -10,9 +10,11 @@ Piece::Piece(int pinInterrupteur, int pinPrise, int pinPresenceSensor, int pinLa
 Piece::Piece(int pinInterrupteur, int pinPrise, int pinPresenceSensor, int pinLampe, int tresholdVoltage)
 {
   isInterrupteurOn = false;
+  isInterrupteurPriseOn = false;
   isPriseAlimenter = false;
   isLampeOn = false;
   presence = false;
+  isNight = true;
   this->pinInterrupteur = pinInterrupteur;
   this->pinPrise = pinPrise;
   this->pinPresenceSensor = pinPresenceSensor;
@@ -45,9 +47,26 @@ bool Piece::getIsLampeOn()
   return isLampeOn;
 }
 
+const char * Piece::getEtatLampe()
+{
+    if(isLampeOn) return "Lampe allumer";
+    return "Lampe eteinte";
+}
+
+const char * Piece::getEtatPrise()
+{
+    if(isPriseAlimenter) return "Prise alimenter";
+    return "Prise deconnecter";
+}
+
 bool Piece::getIsInterrupteurOn()
 {
   return isInterrupteurOn;
+}
+
+bool Piece::getIsInterrupteurPriseOn()
+{
+  return isInterrupteurPriseOn;
 }
 
 bool Piece::getPresence()
@@ -88,6 +107,19 @@ void Piece::updateFromData(float interrupteurState, int presenceState) {
   updateIfPossible(boolFromState(interrupteurState), presenceState);
 }
 
+void Piece::updateFromDataAndHour(float interrupteurState, int presenceState, bool isNight) {
+  this->isNight = isNight;
+  updateFromData(interrupteurState, presenceState);
+}
+
+void Piece::updatePriseFromData(float interrupteurPriseState) {
+  bool isInterrupteurPriseOn = boolFromState(interrupteurPriseState);
+  if(this->isInterrupteurPriseOn != isInterrupteurPriseOn){
+    isPriseAlimenter = !isPriseAlimenter;
+    this->isInterrupteurPriseOn = isInterrupteurPriseOn;
+  }
+}
+
 bool Piece::boolFromState(float state) {
   if(state <= tresholdVoltage) {
     return false;
@@ -124,8 +156,15 @@ void Piece::update(bool isInterrupteurOn, bool presence) {
 
 void Piece::updateFromPresence(bool presence)
 {
-  isLampeOn = presence;
   this->presence = presence;
+  if(isNight && presence)
+  {
+    isLampeOn = true;
+  }
+  else
+  {
+    isLampeOn = false;
+  }
 }
 
 void Piece::updateFromInterrupteur(bool isInterrupteurOn) {

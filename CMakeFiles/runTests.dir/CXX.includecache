@@ -6,21 +6,35 @@
 
 #IncludeRegexTransform: 
 
-/home/dyglo/theo/final/piece.cpp
-string
+/home/dyglo/theo/final/maison.cpp
+maison.h
+/home/dyglo/theo/final/maison.h
+piece.h
+/home/dyglo/theo/final/piece.h
+stdio.h
 -
+string.h
+-
+
+/home/dyglo/theo/final/maison.h
+piece.h
+/home/dyglo/theo/final/piece.h
+
+/home/dyglo/theo/final/piece.cpp
 piece.h
 /home/dyglo/theo/final/piece.h
 
 /home/dyglo/theo/final/piece.h
-string
--
 
 /home/dyglo/theo/final/tests.cpp
 gtest/gtest.h
 -
 iostream
 -
+stdio.h
+-
 piece.h
 /home/dyglo/theo/final/piece.h
+maison.h
+/home/dyglo/theo/final/maison.h
 

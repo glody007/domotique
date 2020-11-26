@@ -123,6 +123,33 @@ runTests/fast:
 	$(MAKE) -f CMakeFiles/runTests.dir/build.make CMakeFiles/runTests.dir/build
 .PHONY : runTests/fast
 
+maison.o: maison.cpp.o
+
+.PHONY : maison.o
+
+# target to build an object file
+maison.cpp.o:
+	$(MAKE) -f CMakeFiles/runTests.dir/build.make CMakeFiles/runTests.dir/maison.cpp.o
+.PHONY : maison.cpp.o
+
+maison.i: maison.cpp.i
+
+.PHONY : maison.i
+
+# target to preprocess a source file
+maison.cpp.i:
+	$(MAKE) -f CMakeFiles/runTests.dir/build.make CMakeFiles/runTests.dir/maison.cpp.i
+.PHONY : maison.cpp.i
+
+maison.s: maison.cpp.s
+
+.PHONY : maison.s
+
+# target to generate assembly for a file
+maison.cpp.s:
+	$(MAKE) -f CMakeFiles/runTests.dir/build.make CMakeFiles/runTests.dir/maison.cpp.s
+.PHONY : maison.cpp.s
+
 piece.o: piece.cpp.o
 
 .PHONY : piece.o
@@ -186,6 +213,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... runTests"
 	@echo "... edit_cache"
+	@echo "... maison.o"
+	@echo "... maison.i"
+	@echo "... maison.s"
 	@echo "... piece.o"
 	@echo "... piece.i"
 	@echo "... piece.s"

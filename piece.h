@@ -4,7 +4,7 @@
 class Piece
 {
   private:
-    bool isInterrupteurOn, isPriseAlimenter, isLampeOn, presence;
+    bool isInterrupteurOn, isInterrupteurPriseOn, isPriseAlimenter, isLampeOn, presence, isNight;
     int pinInterrupteur, pinPrise, pinPresenceSensor, pinLampe, tresholdVoltage;
 
     void updateIfPossible(bool isInterrupteurOn, bool presence);
@@ -31,7 +31,13 @@ class Piece
 
     bool getIsInterrupteurOn();
 
+    bool getIsInterrupteurPriseOn();
+
     bool getPresence();
+
+    const char * getEtatLampe();
+
+    const char * getEtatPrise();
 
     int getPinInterrupteur();
 
@@ -53,7 +59,11 @@ class Piece
 
     void update();
 
+    void updatePriseFromData(float interrupteurPriseState);
+
     void updateFromData(float interrupteurState, int presenceState);
+
+    void updateFromDataAndHour(float interrupteurState, int presenceState, bool isNight);
 
     bool boolFromState(float state);
 };

@@ -19,6 +19,8 @@ class Maison
 
     int getNombrePieces();
 
+    void rapport(char * rapport);
+
     void updateFromCommande(char *commande);
 
     void updateLampe(int piecePosition, char commandeLampe);

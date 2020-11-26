@@ -1,7 +1,10 @@
 #include "maison.h"
 #include "piece.h"
-
+#include <stdio.h>
 using namespace std;
+
+#include <string.h>
+
 
 Maison::Maison(int nombrePieces, Piece *pieces)
 {
@@ -14,6 +17,23 @@ Piece * Maison::getPieces() { return pieces; }
 Piece Maison::getPiece(int numero) { return pieces[numero - 1]; }
 
 int Maison::getNombrePieces() { return nombrePieces; }
+
+void  Maison::rapport(char * rapport)
+{
+  strcat(rapport, "----Maison----\n");
+  char numero[4];
+  for(int i = 0; i < nombrePieces; i++)
+  {
+    strcat(rapport, "Piece ");
+    sprintf(numero,"%d", i+1);
+    strcat(rapport, numero);
+    strcat(rapport, " : ");
+    strcat(rapport, pieces[i].getEtatLampe());
+    strcat(rapport, "\n");
+  }
+  strcat(rapport, pieces[0].getEtatPrise());
+  strcat(rapport, "\n");
+}
 
 void Maison::updateFromCommande(char *commande)
 {

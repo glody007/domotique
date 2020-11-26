@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <iostream>
+#include <stdio.h>
 #include "piece.h"
 #include "maison.h"
 
@@ -99,6 +100,68 @@ TEST(PieceTest, updateFromData) {
   ASSERT_EQ(false, piece.getIsLampeOn());
 }
 
+TEST(PieceTest, updateFromDataAndHour) {
+  Piece piece = Piece();
+  bool isNight = true, isNotNight = false;
+  ASSERT_EQ(false, piece.getIsLampeOn());
+  ASSERT_EQ(false, piece.getPresence());
+
+  //Allumer avec l'interrupteur la nuit
+  piece.updateFromDataAndHour(Piece::HIGH_VOLTAGE, Piece::LOW_VOLTAGE, isNight);
+  ASSERT_EQ(true, piece.getIsLampeOn());
+  ASSERT_EQ(false, piece.getPresence());
+  ASSERT_EQ(true, piece.getIsInterrupteurOn());
+
+  //Toujours present dans la piece la nuit
+  piece.updateFromDataAndHour(Piece::HIGH_VOLTAGE, Piece::HIGH_VOLTAGE, isNight);
+  ASSERT_EQ(true, piece.getIsLampeOn());
+  ASSERT_EQ(true, piece.getPresence());
+  ASSERT_EQ(true, piece.getIsInterrupteurOn());
+
+  //Eteindre avec l'interrupteur le jour
+  piece.updateFromDataAndHour(Piece::LOW_VOLTAGE, Piece::HIGH_VOLTAGE, isNotNight);
+  ASSERT_EQ(false, piece.getIsLampeOn());
+  ASSERT_EQ(true, piece.getPresence());
+  ASSERT_EQ(false, piece.getIsInterrupteurOn());
+
+  //Allumer avec l'interrupteur le jour
+  piece.updateFromDataAndHour(Piece::HIGH_VOLTAGE, Piece::HIGH_VOLTAGE, isNotNight);
+  ASSERT_EQ(true, piece.getIsLampeOn());
+  ASSERT_EQ(true, piece.getPresence());
+  ASSERT_EQ(true, piece.getIsInterrupteurOn());
+
+  //Quitter la piece le jour
+  piece.updateFromDataAndHour(Piece::HIGH_VOLTAGE, Piece::LOW_VOLTAGE, isNotNight);
+  ASSERT_EQ(false, piece.getIsLampeOn());
+  ASSERT_EQ(false, piece.getPresence());
+  ASSERT_EQ(true, piece.getIsInterrupteurOn());
+
+  //Revenir dans la piece le jour
+  piece.updateFromDataAndHour(Piece::HIGH_VOLTAGE, Piece::HIGH_VOLTAGE, isNotNight);
+  ASSERT_EQ(false, piece.getIsLampeOn());
+  ASSERT_EQ(true, piece.getPresence());
+  ASSERT_EQ(true, piece.getIsInterrupteurOn());
+}
+
+TEST(PieceTest, updatePriseFromData) {
+  Piece piece = Piece();
+  ASSERT_EQ(false, piece.getIsPriseAlimenter());
+
+  piece.updatePriseFromData(Piece::LOW_VOLTAGE);
+  ASSERT_EQ(false, piece.getIsPriseAlimenter());
+  ASSERT_EQ(false, piece.getIsInterrupteurPriseOn());
+  piece.updatePriseFromData(Piece::HIGH_VOLTAGE);
+  ASSERT_EQ(true, piece.getIsPriseAlimenter());
+  ASSERT_EQ(true, piece.getIsInterrupteurPriseOn());
+}
+
+TEST(PieceTest, getEtatLampe) {
+  Piece piece = Piece();
+  ASSERT_EQ(0, strcmp(piece.getEtatLampe(), "Lampe eteinte"));
+  piece.allumerLampe();
+  ASSERT_EQ(0, strcmp(piece.getEtatLampe(), "Lampe allumer"));
+}
+
 TEST(MaisonTest, constructor) {
   Piece piece1 = Piece();
   Piece piece2 = Piece();
@@ -125,6 +188,17 @@ TEST(MaisonTest, commande) {
   ASSERT_EQ(false, maison.getPiece(2).getIsLampeOn());
   maison.updateFromCommande(allumerLampe2);
   ASSERT_EQ(true, maison.getPiece(2).getIsLampeOn());
+}
+
+TEST(MaisonTest, rapport) {
+  Piece piece1 = Piece();
+  Piece piece2 = Piece();
+  piece2.allumerLampe();
+  Piece pieces[] = {piece1, piece2};
+  Maison maison = Maison(2, pieces);
+  char rapport[100] = "";
+  maison.rapport(rapport);
+  std::cout<<rapport;
 }
 
 int main(int argc, char **argv) {
