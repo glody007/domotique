@@ -69,7 +69,7 @@ void sendCommandeToMaison()
 void updatePiece(Piece &piece)
 {
   piece.updateFromData(voltageInterrupteurValue(piece), presenceSensorState(piece));
-  piece.updatePriseFromData(voltageInterrupteurValue(piece));
+  piece.updatePriseFromData(voltageInterrupteurPriseValue());
 }
 
 
@@ -106,7 +106,7 @@ void sendCommandePriseToPiece(Piece &piece)
 
 float voltageInterrupteurValue(Piece piece) { return analogRead(piece.getPinInterrupteur()) * 5 / 1024; }
 
-float voltageInterrupteurPriseValue(Piece piece) { return analogRead(pinPriseRelai) * 5 / 1024; }
+float voltageInterrupteurPriseValue() { return analogRead(A6) * 5 / 1024; }
 
 bool isNight() { 
   float LDRState = analogRead(A9) * 5 / 1024;
@@ -140,7 +140,7 @@ void eteindreLampe(Piece &piece)
   }
 }
 
-void deconnecterPrise(Piece &piece) 
+void alimenterPrise(Piece &piece) 
 {
   if(piece.getIsInterrupteurPriseOn())
   {
@@ -152,7 +152,7 @@ void deconnecterPrise(Piece &piece)
   }
 }
 
-void alimenterPrise(Piece &piece) 
+void deconnecterPrise(Piece &piece) 
 {
   if(piece.getIsInterrupteurPriseOn())
   {
